@@ -1,0 +1,32 @@
+Card:
+	- 每張卡的面值和點數
+
+Cards:
+	- 管理52張牌，提供抽牌
+
+module:
+	- 算牌
+
+Dealer:
+	- 莊家、手上的牌
+
+	cards,hit or pass (calculate by computer)
+
+Player:
+	- 玩家姓名、手上的牌
+	cards,hit or pass (can decise by users)
+
+Deck:
+	- 牌局，記錄有幾個人
+
+迴圈
+- 建立一個牌局
+- 幾個玩家？
+- 牌局開始
+- 開始發牌
+	- 剔除中途bust的玩家
+	- 玩家blackjack => 結束
+	- 換莊家
+	- 莊家blackjack => 結束
+	- 計算勝負 => 結束
+- 是否繼續？
