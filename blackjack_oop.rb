@@ -96,22 +96,12 @@ end
 
 class Dealer
 
-	attr_accessor :cardarray, :status, :index
-
-	@@member_count = 0
+	attr_accessor :cardarray, :status
 
 	def initialize
-		@@member_count += 1
-		@index = @@member_count
 		@cardarray = CardArray.new
 		@status = "none"
-		# @cards.push(card1,card2)
 	end
-
-	# def set_close_card(card)
-	# 	@closeCard = card
-	# 	@cardarray.push(card)
-	# end
 
 	def add_card(card)
 		@cardarray.push(card)
@@ -215,14 +205,11 @@ class Deck
 		@@number.to_s
 	end
 
-	def call_win(p)
-		puts p.status_to_s
-	end
-
 	def start
 
 		@players.each do |p|
 
+			puts "===> " + p.name + "'s turn <==="
 			puts p.to_s
 
 			while true
@@ -239,11 +226,11 @@ class Deck
 					puts p.add_card(@cardmanager.take_card) + " " + p.cardarray.total_to_s 
 					case p.status
 					when "win"
-						# puts p.status_to_s
+						puts p.status_to_s
 						@status = "end"
 						return
 					when "lose"
-						# puts p.status_to_s
+						puts p.status_to_s
 						break
 					else
 						next
@@ -302,9 +289,11 @@ class Deck
 			else
 				puts "no one win."
 			end
-		else
+		elsif @high_point > 0
 			@winner.status = "win"
 			puts @winner.status_to_s
+		else
+			puts "no one win."
 		end
 	end
 end
