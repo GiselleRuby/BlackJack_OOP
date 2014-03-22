@@ -94,14 +94,7 @@ class CardArray
 	end
 end
 
-class Dealer
-
-	attr_accessor :cardarray, :status
-
-	def initialize
-		@cardarray = CardArray.new
-		@status = "none"
-	end
+module Hand
 
 	def add_card(card)
 		@cardarray.push(card)
@@ -124,6 +117,44 @@ class Dealer
 		@cardarray.get
 	end
 
+	def clear_all_cards
+		@cardarray = CardArray.new
+		@status = "none"
+	end
+end
+
+class Dealer
+
+	include Hand
+
+	attr_accessor :cardarray, :status
+
+	def initialize
+		@cardarray = CardArray.new
+		@status = "none"
+	end
+
+	# def add_card(card)
+	# 	@cardarray.push(card)
+	# 	message = "get card: " + card.to_s
+	# 	if @cardarray.count == 21
+	# 		@status = "win"
+	# 		message += " => BlackJack!"
+	# 		# binding.pry
+	# 	elsif @cardarray.count > 21
+	# 		@status = "lose"
+	# 		message += " => Busted!"
+	# 		# binding.pry
+	# 	else
+	# 		message
+	# 		# binding.pry
+	# 	end 
+	# end
+	
+	# def get_all_cards
+	# 	@cardarray.get
+	# end
+
 	def to_s
 		"Dealer now has " + @cardarray.count.to_s + " points."
 	end
@@ -137,8 +168,17 @@ class Dealer
 	end
 end
 
-class Player < Dealer
-	attr_accessor :name		
+class Player
+	
+	include Hand
+
+	attr_accessor :cardarray, :status, :name
+
+	def initialize(n)
+		@cardarray = CardArray.new
+		@status = "none"
+		@name = n
+	end	
 
 	def to_s
 		"Player #{name} now has " + @cardarray.count.to_s + " points."
@@ -170,9 +210,17 @@ class Deck
 		@high_point = 0
 	end
 
+	def clear
+		@status = "none"
+		@cardmanager = CardsManager.new(1)
+		@high_point = 0
+		@dealer.clear_all_cards
+		@players.each {|p| p.clear_all_cards}
+	end
+
 	def add_player(name)
-		player = Player.new
-		player.name = name
+		player = Player.new(name)
+		# player.name = name
 		# binding.pry
 		@players.push(player)
 	end
@@ -195,10 +243,6 @@ class Deck
 
 	def get_players
 		@players
-	end
-
-	def status?
-		
 	end
 
 	def round?
@@ -298,47 +342,59 @@ class Deck
 	end
 end
 
-players = []
+#new
+#player get in
+#start
 
-while true	
-	puts "Enter S to start a new game."
-	input = gets.chomp.upcase
-	if input == "S"
-		deck1 = Deck.new
-		puts "=== Start Game " + deck1.round? + " ==="
+class BlackJack
+	def initialize
+		@deck = Deck.new
+	end
 
-		if players.count == 0
-			puts "Player's name?(till Enter)"
-			while true
-				name = gets.chomp
-				if name == ""
-					break
-				else
-					deck1.add_player(name)
-					players.push(name)
-				end
+	def set_players
+		puts "Player's name?(till Enter)"
+		while true
+			name = gets.chomp
+			if name == ""
+				break
+			else
+				@deck.add_player(name)
 			end
-		else
-			players.each {|p| deck1.add_player(p)}
 		end
-		puts "Total " + deck1.get_players.count.to_s + " players, game start!"
-		puts
+	end
 
-		puts "=>everyone gets two cards."
-		deck1.get_first_two_cards
-		puts
-		# puts deck1.round?
-		deck1.start
-		puts 
+	def start
+		while true	
+			puts "Enter S to start a new game."
+			input = gets.chomp.upcase
+			if input == "S"
+				# deck1 = Deck.new
+				@deck.clear
+				puts "=== Start Game " + @deck.round? + " ==="
+				puts "Total " + @deck.get_players.count.to_s + " players, game start!"
+				puts
 
-		deck1.dealer_turn
-		# deck1.who_win?
+				puts "=>everyone gets two cards."
+				@deck.get_first_two_cards
+				puts
+				# puts deck1.round?
+				@deck.start
+				puts 
 
-	else
-		puts "=== End ==="
-		break
+				@deck.dealer_turn
+				# deck1.who_win?
+
+			else
+				puts "=== End ==="
+				break
+			end
+		end
+		
 	end
 end
 
+blackjack = BlackJack.new
+blackjack.set_players
+blackjack.start
 
 
